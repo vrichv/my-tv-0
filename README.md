@@ -94,3 +94,5 @@ adb install my-tv-0.apk
 ## 感謝
 
 [live](https://github.com/fanmingming/live)
+
+[![Powered by DartNode](https://dartnode.com/branding/DN-Open-Source-sm.png)](https://dartnode.com "Powered by DartNode - Free VPS for Open Source")
