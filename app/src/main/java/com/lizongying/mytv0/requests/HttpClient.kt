@@ -16,9 +16,9 @@ import javax.net.ssl.SSLContext
 
 object HttpClient {
     const val TAG = "HttpClient"
-    private const val HOST = "https://mirror.ghproxy.com/https://raw.githubusercontent.com/vrichv/my-tv-0/"
+    private const val HOST = "https://raw.githubusercontent.com/vrichv/my-tv-0/"
     const val DOWNLOAD_HOST =
-        "https://mirror.ghproxy.com/https://github.com/vrichv/my-tv-0/releases/download/"
+        "https://github.com/vrichv/my-tv-0/releases/download/"
 
     val okHttpClient: OkHttpClient by lazy {
         getSafeOkHttpClient()
