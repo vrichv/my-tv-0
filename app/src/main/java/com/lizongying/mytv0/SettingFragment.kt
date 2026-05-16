@@ -114,10 +114,13 @@ class SettingFragment : Fragment() {
 
         binding.qrcode.setOnClickListener {
             val imageModalFragment = ModalFragment()
-            val size = Utils.dpToPx(200)
+            val metrics = resources.displayMetrics
+            val size = (minOf(metrics.widthPixels, metrics.heightPixels) * 0.6f).toInt()
+                .coerceIn(Utils.dpToPx(160), Utils.dpToPx(260))
             val img = QrCodeUtil().createQRCodeBitmap(server, size, size)
             val args = Bundle()
-            args.putParcelable("bitmap", img)
+            args.putParcelable(ModalFragment.KEY_BITMAP, img)
+            args.putString(ModalFragment.KEY_TEXT, server)
             imageModalFragment.arguments = args
 
             imageModalFragment.show(requireFragmentManager(), ModalFragment.TAG)
@@ -287,14 +290,15 @@ class SettingFragment : Fragment() {
             tvListModel?.setPosition(SP.DEFAULT_POSITION)
             tvListModel?.setPositionPlaying(SP.DEFAULT_POSITION)
 
-            SP.config = SP.DEFAULT_CONFIG_URL
+            SP.config = null
+            SP.channelListJson = ""
+            context.deleteFile(viewModel.FILE_NAME)
+            mainActivity.playFirstOnNextChannelLoad()
             viewModel.reset(context)
-            confirmConfig()
 
             SP.channel = SP.DEFAULT_CHANNEL
             confirmChannel()
 
-            context.deleteFile(viewModel.FILE_NAME)
             SP.deleteLike()
             SP.position = 0
             val tvModel = viewModel.groupModel.getPosition(0)
@@ -326,6 +330,10 @@ class SettingFragment : Fragment() {
         }
 
         var url = SP.config!!
+        if (url.isBlank()) {
+            R.string.invalid_config_address.showToast()
+            return
+        }
         url = Utils.formatUrl(url)
         uri = Uri.parse(url)
         if (uri.scheme == "") {
@@ -335,6 +343,7 @@ class SettingFragment : Fragment() {
             if (uri.scheme == "file") {
                 requestReadPermissions()
             } else {
+                (activity as MainActivity).playFirstOnNextChannelLoad()
                 viewModel.parseUri(uri)
             }
         } else {
@@ -421,9 +430,10 @@ class SettingFragment : Fragment() {
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 permissionsList.toTypedArray<String>(),
-                PERMISSIONS_REQUEST_CODE
+                PERMISSION_READ_EXTERNAL_STORAGE_REQUEST_CODE
             )
         } else {
+            (activity as MainActivity).playFirstOnNextChannelLoad()
             viewModel.parseUri(uri)
         }
     }
@@ -436,6 +446,7 @@ class SettingFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_READ_EXTERNAL_STORAGE_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                (activity as MainActivity).playFirstOnNextChannelLoad()
                 viewModel.parseUri(uri)
             } else {
                 R.string.authorization_failed.showToast()
@@ -468,4 +479,3 @@ class SettingFragment : Fragment() {
         const val PERMISSION_READ_EXTERNAL_STORAGE_REQUEST_CODE = 2
     }
 }
-

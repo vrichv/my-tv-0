@@ -116,9 +116,24 @@ class TVModel(var tv: TV) : ViewModel() {
             return _mediaItem
         } else {
             // TODO Maybe url is null
-            _mediaItem = MediaItem.fromUri(getVideoUrl()!!)
+            _mediaItem = buildMediaItem(getVideoUrl()!!)
             return _mediaItem
         }
+    }
+
+    private fun buildMediaItem(uri: String): MediaItem {
+        return MediaItem.Builder()
+            .setUri(uri)
+            .setLiveConfiguration(
+                MediaItem.LiveConfiguration.Builder()
+                    .setTargetOffsetMs(LIVE_TARGET_OFFSET_MS)
+                    .setMinOffsetMs(LIVE_MIN_OFFSET_MS)
+                    .setMaxOffsetMs(LIVE_MAX_OFFSET_MS)
+                    .setMinPlaybackSpeed(LIVE_MIN_PLAYBACK_SPEED)
+                    .setMaxPlaybackSpeed(LIVE_MAX_PLAYBACK_SPEED)
+                    .build()
+            )
+            .build()
     }
 
     private lateinit var httpDataSource: DefaultHttpDataSource.Factory
@@ -157,7 +172,7 @@ class TVModel(var tv: TV) : ViewModel() {
             }
         }
 
-        _mediaItem = MediaItem.fromUri(uri.toString())
+        _mediaItem = buildMediaItem(uri.toString())
 
         if (path.lowercase().endsWith(".m3u8")) {
             addSource(SourceType.HLS)
@@ -239,6 +254,11 @@ class TVModel(var tv: TV) : ViewModel() {
 
     companion object {
         private const val TAG = "TVModel"
+        private const val LIVE_TARGET_OFFSET_MS = 12_000L
+        private const val LIVE_MIN_OFFSET_MS = 6_000L
+        private const val LIVE_MAX_OFFSET_MS = 30_000L
+        private const val LIVE_MIN_PLAYBACK_SPEED = 0.98f
+        private const val LIVE_MAX_PLAYBACK_SPEED = 1.02f
         val videoExtensions = setOf(
             ".flv", ".mp4", ".avi", ".mkv", ".mov", ".mpeg", "wmv", "webm"
         )

@@ -154,6 +154,13 @@ class TVListModel(private val name: String, private val groupIndex: Int) : ViewM
         return tvListValue[p]
     }
 
+    fun setPositionByTvId(id: Int) {
+        val index = tvListValue.indexOfFirst { it.tv.id == id }
+        if (index >= 0) {
+            setPosition(index)
+        }
+    }
+
     init {
         _position.value = SP.position
         Log.i(TAG, "SP.position ${SP.position}")

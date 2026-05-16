@@ -17,4 +17,22 @@
         app:shutter_background_color="@android:color/transparent"
         app:resize_mode="fill"
         app:use_controller="false" />
+
+    <LinearLayout
+        android:id="@+id/player_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/player_loading_bar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white" />
+
+    </LinearLayout>
 </FrameLayout>
