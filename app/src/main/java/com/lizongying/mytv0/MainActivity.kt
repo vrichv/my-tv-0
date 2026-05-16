@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var gestureDetector: GestureDetector
 
     private var server: SimpleServer? = null
+    private var playFirstOnNextChannelLoad = false
 
     lateinit var viewModel: MainViewModel
 
@@ -149,6 +150,10 @@ class MainActivity : AppCompatActivity() {
                     watch()
                     Log.i(TAG, "menuFragment update")
                     menuFragment.update()
+                    if (playFirstOnNextChannelLoad) {
+                        playFirstOnNextChannelLoad = false
+                        playFirstAfterChannelLoad()
+                    }
                 }
             }
 
@@ -163,7 +168,12 @@ class MainActivity : AppCompatActivity() {
                 if (it) {
                     val prevGroup = viewModel.groupModel.positionValue
                     Log.i(TAG, "SP.channel ${SP.channel}")
-                    val tvModel = if (SP.channel > 0) {
+                    val tvModel = if (SP.defaultLike &&
+                        (viewModel.groupModel.getFavoritesList()?.size() ?: 0) > 0
+                    ) {
+                        viewModel.groupModel.setPosition(0)
+                        viewModel.groupModel.getFavoritesList()?.getTVModel(0)
+                    } else if (SP.channel > 0) {
                         val position = if (SP.channel < viewModel.listModel.size) {
                             // R.string.play_default_channel.showToast()
                             SP.channel - 1
@@ -387,6 +397,49 @@ class MainActivity : AppCompatActivity() {
                 channelFragment.show(tvModel)
             }
         }
+    }
+
+    fun playNextAfterPlaybackError(failedTvModel: com.lizongying.mytv0.models.TVModel?) {
+        val list = getPlaybackLoopList() ?: return
+        failedTvModel?.let { list.setPositionByTvId(it.tv.id) }
+        val tvModel = list.getNext() ?: return
+        playFromList(list, tvModel)
+    }
+
+    fun playFirstOnNextChannelLoad() {
+        playFirstOnNextChannelLoad = true
+    }
+
+    fun playFirstAfterChannelLoad() {
+        val list = getPlaybackLoopList() ?: return
+        val tvModel = list.getTVModel(0) ?: return
+        playFromList(list, tvModel)
+    }
+
+    private fun getPlaybackLoopList(): com.lizongying.mytv0.models.TVListModel? {
+        val favorites = viewModel.groupModel.getFavoritesList()
+        return if (SP.defaultLike && favorites != null && favorites.size() > 0) {
+            favorites
+        } else {
+            viewModel.groupModel.getAllList()
+        }
+    }
+
+    private fun playFromList(
+        list: com.lizongying.mytv0.models.TVListModel,
+        tvModel: com.lizongying.mytv0.models.TVModel
+    ) {
+        val prevGroup = viewModel.groupModel.positionValue
+        viewModel.groupModel.setPosition(list.getGroupIndex())
+        viewModel.groupModel.setPlaying()
+        list.setPlaying()
+        tvModel.setReady()
+
+        val currentGroup = viewModel.groupModel.positionValue
+        if (currentGroup != prevGroup) {
+            menuFragment.updateList(currentGroup)
+        }
+        viewModel.groupModel.isInLikeMode = SP.defaultLike && currentGroup == 0
     }
 
     fun play(position: Int) {
