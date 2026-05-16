@@ -49,8 +49,8 @@ object SP {
 
     private const val KEY_LOG_TIMES = "log_times"
 
-    const val DEFAULT_CONFIG_URL = "https://raw.githubusercontent.com/develop202/migu_video/refs/heads/main/interface.txt"
-    const val DEFAULT_EPG = "https://live.fanmingming.com/e.xml"
+    const val DEFAULT_CONFIG_URL = "https://cdn.jsdelivr.net/gh/develop202/migu_video@main/interface.txt"
+    const val DEFAULT_EPG = ""
     const val DEFAULT_CHANNEL = 0
     const val DEFAULT_SHOW_ALL_CHANNELS = false
     const val DEFAULT_COMPACT_MENU = true

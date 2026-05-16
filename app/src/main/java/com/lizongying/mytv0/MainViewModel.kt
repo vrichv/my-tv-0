@@ -62,9 +62,9 @@ class MainViewModel : ViewModel() {
                 if (it.startsWith("http")) {
                     viewModelScope.launch {
                         update(it)
-                        SP.epg?.let { i ->
-                            updateEPG(i)
-                        }
+                        if (!SP.epg.isNullOrEmpty()) {
+                        updateEPG(SP.epg!!)
+                    }
                     }
                 }
             }
