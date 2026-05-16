@@ -8,7 +8,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.conscrypt.Conscrypt
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.security.Security
 import java.util.Collections
 import java.util.concurrent.TimeUnit
@@ -16,20 +15,22 @@ import javax.net.ssl.SSLContext
 
 object HttpClient {
     const val TAG = "HttpClient"
-    private const val HOST = "https://raw.githubusercontent.com/vrichv/my-tv-0/"
-    const val DOWNLOAD_HOST =
-        "https://github.com/vrichv/my-tv-0/releases/download/"
+
+    // The branch whose directory holds APK and version.json on the release branch
+    const val BUILD_BRANCH = "kk"
+
+    val RELEASE_HOSTS = listOf(
+        "https://cdn.jsdelivr.net/gh/vrichv/my-tv-0@release/",
+        "https://raw.githubusercontent.com/vrichv/my-tv-0/refs/heads/release/",
+    )
+
+    val DOWNLOAD_HOSTS = listOf(
+        "https://cdn.jsdelivr.net/gh/vrichv/my-tv-0@release/",
+        "https://raw.githubusercontent.com/vrichv/my-tv-0/refs/heads/releases/",
+    )
 
     val okHttpClient: OkHttpClient by lazy {
         getSafeOkHttpClient()
-    }
-
-    val releaseService: ReleaseService by lazy {
-        Retrofit.Builder()
-            .baseUrl(HOST)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build().create(ReleaseService::class.java)
     }
 
     val configService: ConfigService by lazy {
