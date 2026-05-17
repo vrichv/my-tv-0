@@ -111,6 +111,9 @@ jobs:
 
           git checkout --orphan release-latest
 
+          # Remove residual source files from checkout, keep only newly added files
+          git rm -rf . 2>/dev/null || true
+
           # Copy only branch subdirectories from origin/release (skip current branch)
           if git rev-parse origin/release >/dev/null 2>&1; then
             for dir in $(git ls-tree -d --name-only origin/release); do
