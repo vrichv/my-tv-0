@@ -26,7 +26,7 @@ object HttpClient {
 
     val DOWNLOAD_HOSTS = listOf(
         "https://cdn.jsdelivr.net/gh/vrichv/my-tv-0@release/",
-        "https://raw.githubusercontent.com/vrichv/my-tv-0/refs/heads/releases/",
+        "https://raw.githubusercontent.com/vrichv/my-tv-0/refs/heads/release/",
     )
 
     val okHttpClient: OkHttpClient by lazy {
