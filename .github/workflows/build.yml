@@ -24,6 +24,9 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
+      - name: Update CA certificates
+        run: curl -L https://curl.se/ca/cacert.pem -o app/src/main/assets/cacert.pem
+
       - name: Run build with Gradle wrapper
         run: ./gradlew assembleRelease
 

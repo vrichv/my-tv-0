@@ -16,6 +16,9 @@ android {
         versionCode = getVersionCode()
         versionName = getVersionName()
         multiDexEnabled = true
+        ndk {
+            abiFilters += listOf("armeabi-v7a")
+        }
     }
 
     buildFeatures {
